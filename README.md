@@ -9,7 +9,7 @@
 </p>
 
 ---
-## https://github.com/Ibrahim404-cyber/What-sapp-short-link/deployments/github-pages
+## https://ibrahim404-cyber.github.io/What-sapp-short-link/
 
 ## ✨ Features
 
