@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Link Generator</title>
+
+    <!-- QRCode.js for generating QR codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
+    </script>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <style>
+        /* ============================================================
+               MATERIAL DESIGN 3 — DARK THEME
+               All existing IDs & classes preserved.
+               ============================================================ */
+
+        /* ---------- M3 Color Tokens ---------- */
+        :root {
+            --md-sys-color-primary: #7DD89B;
+            --md-sys-color-on-primary: #003917;
+            --md-sys-color-primary-container: #005224;
+            --md-sys-color-on-primary-container: #7DD89B;
+            --md-sys-color-secondary: #B4CCB6;
+            --md-sys-color-on-secondary: #1F3423;
+            --md-sys-color-secondary-container: #354B39;
+            --md-sys-color-on-secondary-container: #D0E8D1;
+            --md-sys-color-tertiary: #D1E6B3;
+            --md-sys-color-on-tertiary: #1F2F0A;
+            --md-sys-color-tertiary-container: #36461C;
+            --md-sys-color-on-tertiary-container: #D1E6B3;
+            --md-sys-color-error: #FFB4AB;
+            --md-sys-color-on-error: #690005;
+            --md-sys-color-error-container: #93000A;
+            --md-sys-color-on-error-container: #FFDAD6;
+            --md-sys-color-surface: #131A16;
+            --md-sys-color-surface-dim: #131A16;
+            --md-sys-color-surface-bright: #39403B;
+            --md-sys-color-surface-container-lowest: #0E1410;
+            --md-sys-color-surface-container-low: #1A211D;
+            --md-sys-color-surface-container: #1F2622;
+            --md-sys-color-surface-container-high: #29302C;
+            --md-sys-color-surface-container-highest: #343B36;
+            --md-sys-color-on-surface: #E1E3DF;
+            --md-sys-color-on-surface-variant: #C0CABF;
+            --md-sys-color-outline: #8A948A;
+            --md-sys-color-outline-variant: #404A42;
+            --md-sys-color-shadow: #000000;
+            --md-sys-color-scrim: #000000;
+            --md-sys-color-inverse-surface: #E1E3DF;
+            --md-sys-color-inverse-on-surface: #2E332F;
+            --md-sys-color-inverse-primary: #006C2E;
+            --md-sys-color-surface-tint: #7DD89B;
+
+            /* M3 Shape Tokens */
+            --md-shape-corner-extra-small: 4px;
+            --md-shape-corner-small: 8px;
+            --md-shape-corner-medium: 12px;
+            --md-shape-corner-large: 16px;
+            --md-shape-corner-extra-large: 28px;
+            --md-shape-corner-full: 9999px;
+
+            /* M3 Elevation Tokens */
+            --md-elevation-0: none;
+            --md-elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 1px 3px 1px rgba(0, 0, 0, 0.15);
+            --md-elevation-2: 0 1px 2px 0 rgba(0, 0, 0, 0.30), 0 2px 6px 2px rgba(0, 0, 0, 0.15);
+            --md-elevation-3: 0 1px 3px 0 rgba(0, 0, 0, 0.30), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+            --md-elevation-4: 0 2px 3px 0 rgba(0, 0, 0, 0.30), 0 6px 10px 4px rgba(0, 0, 0, 0.15);
+            --md-elevation-5: 0 4px 4px 0 rgba(0, 0, 0, 0.30), 0 8px 12px 6px rgba(0, 0, 0, 0.15);
+
+            /* M3 Motion */
+            --md-motion-duration-short-1: 100ms;
+            --md-motion-duration-short-2: 200ms;
+            --md-motion-duration-medium-1: 250ms;
+            --md-motion-duration-medium-2: 400ms;
+            --md-motion-duration-long-1: 500ms;
+            --md-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+            --md-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        /* ---------- Reset & Base ---------- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', sans-serif;
+            background: var(--md-sys-color-surface);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            margin: 0;
+            color: var(--md-sys-color-on-surface);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ---------- Card Container (M3 Surface Container) ---------- */
+        .card {
+            background: var(--md-sys-color-surface-container);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-radius: var(--md-shape-corner-extra-large);
+            padding: 40px 36px;
+            max-width: 560px;
+            width: 100%;
+            box-shadow: var(--md-elevation-3);
+            border: none;
+            transition: box-shadow var(--md-motion-duration-medium-2) var(--md-motion-easing-standard);
+        }
+
+        /* ---------- Header ---------- */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .header-icon {
+            width: 56px;
+            height: 56px;
+            background: var(--md-sys-color-primary-container);
+            border-radius: var(--md-shape-corner-medium);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--md-sys-color-on-primary-container);
+            box-shadow: none;
+            transition: background var(--md-motion-duration-short-2) var(--md-motion-easing-standard);
+        }
+
+        .header-text h1 {
+            color: var(--md-sys-color-on-surface);
+            font-size: 28px;
+            font-weight: 400;
+            letter-spacing: 0;
+            line-height: 1.2;
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        .header-text p {
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: 2px;
+            letter-spacing: 0.25px;
+        }
+
+        /* ---------- Form ---------- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* ---------- M3 Filled Text Fields ---------- */
+        select {
+            width: 100%;
+            padding: 16px 16px 14px 16px;
+            background: var(--md-sys-color-surface-container-highest);
+            border: none;
+            border-bottom: 2px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-shape-corner-small) var(--md-shape-corner-small) 0 0;
+            color: var(--md-sys-color-on-surface);
+            font-size: 16px;
+            font-weight: 400;
+            outline: none;
+            transition: background var(--md-motion-duration-short-2) var(--md-motion-easing-standard),
+                border-color var(--md-motion-duration-short-2) var(--md-motion-easing-standard);
+            font-family: inherit;
+            line-height: 1.5;
+            caret-color: var(--md-sys-color-primary);
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            cursor: pointer;
+            padding-right: 36px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c0cabf' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+        }
+
+        select:hover {
+            background-color: var(--md-sys-color-surface-container-highest);
+        }
+
+        select:focus {
+            background-color: var(--md-sys-color-surface-container-highest);
+            border-bottom-color: var(--md-sys-color-primary);
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 16px 16px 14px 16px;
+            background: var(--md-sys-color-surface-container-highest);
+            border: none;
+            border-bottom: 2px solid var(--md-sys-color-outline-variant);
+            border-radius: var(--md-shape-corner-small) var(--md-shape-corner-small) 0 0;
+            color: var(--md-sys-color-on-surface);
+            font-size: 16px;
+            font-weight: 400;
+            outline: none;
+            transition: background var(--md-motion-duration-short-2) var(--md-motion-easing-standard),
+                border-color var(--md-motion-duration-short-2) var(--md-motion-easing-standard);
+            font-family: inherit;
+            line-height: 1.5;
+            caret-color: var(--md-sys-color-primary);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--md-sys-color-on-surface-variant);
+            opacity: 0.6;
+        }
+
+        input:hover,
+        textarea:hover {
+            background: var(--md-sys-color-surface-container-highest);
+        }
+
+        input:focus,
+        textarea:focus {
+            background: var(--md-sys-color-surface-container-highest);
+            border-bottom-color: var(--md-sys-color-primary);
+            box-shadow: none;
+        }
+
+        input:focus-visible,
+        textarea:focus-visible {
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 72px;
+            border-radius: var(--md-shape-corner-small) var(--md-shape-corner-small) 0 0;
+            padding: 14px 16px;
+        }
+
+        /* ---------- Country Code + Phone ---------- */
+        .country-code-input {
+            max-width: 170px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .country-code-input select {
+            text-align: left;
+            padding-left: 40px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .country-code-wrapper {
+            position: relative;
+        }
+
+        .flag-display {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            line-height: 1;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ---------- M3 Filled Button ---------- */
+        .btn-generate {
+            width: 100%;
+            padding: 0 24px;
+            height: 56px;
+            background: var(--md-sys-color-primary);
+            border: none;
+            border-radius: var(--md-shape-corner-full);
+            color: var(--md-sys-color-on-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--md-motion-duration-short-2) var(--md-motion-easing-standard);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 8px;
+            box-shadow: var(--md-elevation-1);
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', sans-serif;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-generate::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--md-shape-corner-full);
+            background: transparent;
+            transition: background var(--md-motion-duration-short-1) var(--md-motion-easing-standard);
+            pointer-events: none;
+        }
+
+        .btn-generate:hover::after {
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-generate:active::after {
+            background: rgba(0, 0, 0, 0.16);
+        }
+
+        .btn-generate:hover {
+            box-shadow: var(--md-elevation-2);
+            transform: none;
+        }
+
+        .btn-generate:active {
+            box-shadow: var(--md-elevation-1);
+            transform: none;
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.38;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-generate:disabled::after {
+            display: none;
+        }
+
+        .btn-generate i {
+            font-size: 20px;
+        }
+
+        .spinner {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--md-sys-color-on-primary);
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            opacity: 0.7;
+        }
+
+        .btn-generate.loading .spinner {
+            display: inline-block;
+        }
+        .btn-generate.loading .btn-text {
+            display: none;
+        }
+        .btn-generate.loading .btn-icon {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---------- Result Section ---------- */
+        .result {
+            margin-top: 28px;
+            display: none;
+            animation: fadeUp 0.4s var(--md-motion-easing-emphasized) forwards;
+        }
+
+        .result.visible {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-box {
+            background: var(--md-sys-color-surface-container-high);
+            border-radius: var(--md-shape-corner-medium);
+            padding: 16px 20px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: background var(--md-motion-duration-short-2) var(--md-motion-easing-standard);
+        }
+
+        .result-box .link {
+            color: var(--md-sys-color-on-surface);
+            font-size: 15px;
+            font-weight: 500;
+            word-break: break-all;
+            flex: 1;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            letter-spacing: 0.2px;
+        }
+
+        .result-box .link a {
+            color: var(--md-sys-color-primary);
+            text-decoration: none;
+            transition: color var(--md-motion-duration-short-1) var(--md-motion-easing-standard);
+        }
+
+        .result-box .link a:hover {
+            color: var(--md-sys-color-on-primary-container);
+            text-decoration: none;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon-only {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--md-shape-corner-full);
+            border: none;
+            background: transparent;
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all var(--md-motion-duration-short-2) var(--md-motion-easing-standard);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-icon-only::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--md-shape-corner-full);
+            background: transparent;
+            transition: background var(--md-motion-duration-short-1) var(--md-motion-easing-standard);
+            pointer-events: none;
+        }
+
+        .btn-icon-only:hover::after {
+            background: var(--md-sys-color-primary);
+            opacity: 0.08;
+        }
+
+        .btn-icon-only:active::after {
+            background: var(--md-sys-color-primary);
+            opacity: 0.16;
+        }
+
+        .btn-icon-only:hover {
+            color: var(--md-sys-color-primary);
+            background: transparent;
+        }
+
+        .btn-icon-only.copied {
+            color: var(--md-sys-color-primary);
+            background: var(--md-sys-color-primary-container);
+            opacity: 1;
+        }
+
+        .btn-icon-only.copied::after {
+            display: none;
+        }
+
+        /* ---------- QR Code Section ---------- */
+        .qr-section {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 14px;
+            padding: 8px 0 4px 0;
+        }
+
+        .qr-wrapper {
+            background: var(--md-sys-color-surface);
+            padding: 20px;
+            border-radius: var(--md-shape-corner-medium);
+            box-shadow: var(--md-elevation-2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: box-shadow var(--md-motion-duration-medium-2) var(--md-motion-easing-standard);
+            min-width: 180px;
+            min-height: 180px;
+        }
+
+        .qr-wrapper:hover {
+            box-shadow: var(--md-elevation-3);
+        }
+
+        #qrcode {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 160px;
+            height: 160px;
+            flex-shrink: 0;
+        }
+
+        #qrcode img,
+        #qrcode canvas {
+            display: block !important;
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: var(--md-shape-corner-extra-small);
+            image-rendering: pixelated;
+        }
+
+        #qrcode:empty::after {
+            content: 'Generating QR…';
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.5;
+        }
+
+        .qr-label {
+            color: var(--md-sys-color-on-surface-variant);
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        /* ---------- M3 Error Message ---------- */
+        .error-msg {
+            color: var(--md-sys-color-on-error-container);
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--md-sys-color-error-container);
+            border-radius: var(--md-shape-corner-small);
+            border: none;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--md-elevation-0);
+        }
+
+        .error-msg.visible {
+            display: flex;
+        }
+
+        .error-msg i {
+            font-size: 20px;
+            flex-shrink: 0;
+            color: var(--md-sys-color-on-error-container);
+        }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 20px;
+                border-radius: var(--md-shape-corner-extra-large);
+            }
+
+            .header-text h1 {
+                font-size: 22px;
+            }
+
+            .header-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 22px;
+            }
+
+            .input-row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .country-code-input {
+                max-width: 100%;
+            }
+
+            .result-box {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 14px;
+                padding: 16px;
+            }
+
+            .result-box .link {
+                font-size: 14px;
+                text-align: center;
+            }
+
+            .result-actions {
+                justify-content: center;
+            }
+
+            #qrcode {
+                width: 130px;
+                height: 130px;
+            }
+
+            .qr-wrapper {
+                padding: 14px;
+                min-width: 150px;
+                min-height: 150px;
+            }
+
+            .btn-generate {
+                height: 50px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .card {
+                padding: 20px 14px;
+            }
+            .header-text h1 {
+                font-size: 19px;
+            }
+            .btn-generate {
+                font-size: 14px;
+                height: 48px;
+                padding: 0 16px;
+            }
+            #qrcode {
+                width: 110px;
+                height: 110px;
+            }
+            .qr-wrapper {
+                padding: 12px;
+                min-width: 130px;
+                min-height: 130px;
+            }
+        }
+
+        /* ---------- Scrollbar ---------- */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--md-sys-color-outline-variant);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--md-sys-color-outline);
+        }
+
+        .header-icon i {
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .btn-generate .btn-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-generate .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+        .btn-generate .btn-icon {
+            position: relative;
+            z-index: 1;
+        }
+        .btn-generate .spinner {
+            position: relative;
+            z-index: 1;
+        }
+
+        input:focus-visible,
+        textarea:focus-visible,
+        .btn-generate:focus-visible,
+        .btn-icon-only:focus-visible {
+            outline: 2px solid var(--md-sys-color-primary);
+            outline-offset: 2px;
+        }
+        .btn-generate:focus-visible {
+            outline-offset: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-icon">
+                <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="header-text">
+                <h1>WhatsApp Link</h1>
+                <p>Generate short, trackable links</p>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form id="linkForm" autocomplete="off">
+
+            <!-- Row: Country Code + Phone Number -->
+            <div class="input-row">
+                <div class="form-group country-code-input">
+                    <label for="countryCode">Country Code</label>
+                    <div class="country-code-wrapper">
+                        <span id="flagDisplay" class="flag-display"></span>
+                        <select id="countryCode">
+                        <option value="93">Afghanistan +93</option>
+                        <option value="355">Albania +355</option>
+                        <option value="213">Algeria +213</option>
+                        <option value="376">Andorra +376</option>
+                        <option value="244">Angola +244</option>
+                        <option value="1">Anguilla +1</option>
+                        <option value="1">Antigua and Barbuda +1</option>
+                        <option value="54">Argentina +54</option>
+                        <option value="374">Armenia +374</option>
+                        <option value="297">Aruba +297</option>
+                        <option value="61">Australia +61</option>
+                        <option value="43">Austria +43</option>
+                        <option value="994">Azerbaijan +994</option>
+                        <option value="1">Bahamas +1</option>
+                        <option value="973">Bahrain +973</option>
+                        <option value="880" selected>Bangladesh +880</option>
+                        <option value="1">Barbados +1</option>
+                        <option value="375">Belarus +375</option>
+                        <option value="32">Belgium +32</option>
+                        <option value="501">Belize +501</option>
+                        <option value="229">Benin +229</option>
+                        <option value="1">Bermuda +1</option>
+                        <option value="975">Bhutan +975</option>
+                        <option value="591">Bolivia +591</option>
+                        <option value="387">Bosnia and Herzegovina +387</option>
+                        <option value="267">Botswana +267</option>
+                        <option value="55">Brazil +55</option>
+                        <option value="673">Brunei +673</option>
+                        <option value="359">Bulgaria +359</option>
+                        <option value="226">Burkina Faso +226</option>
+                        <option value="257">Burundi +257</option>
+                        <option value="238">Cabo Verde +238</option>
+                        <option value="855">Cambodia +855</option>
+                        <option value="237">Cameroon +237</option>
+                        <option value="1">Canada +1</option>
+                        <option value="236">Central African Republic +236</option>
+                        <option value="235">Chad +235</option>
+                        <option value="56">Chile +56</option>
+                        <option value="86">China +86</option>
+                        <option value="57">Colombia +57</option>
+                        <option value="269">Comoros +269</option>
+                        <option value="242">Congo (Republic) +242</option>
+                        <option value="243">Congo (DRC) +243</option>
+                        <option value="682">Cook Islands +682</option>
+                        <option value="506">Costa Rica +506</option>
+                        <option value="385">Croatia +385</option>
+                        <option value="53">Cuba +53</option>
+                        <option value="357">Cyprus +357</option>
+                        <option value="420">Czech Republic +420</option>
+                        <option value="45">Denmark +45</option>
+                        <option value="253">Djibouti +253</option>
+                        <option value="1">Dominica +1</option>
+                        <option value="1">Dominican Republic +1</option>
+                        <option value="593">Ecuador +593</option>
+                        <option value="20">Egypt +20</option>
+                        <option value="503">El Salvador +503</option>
+                        <option value="240">Equatorial Guinea +240</option>
+                        <option value="291">Eritrea +291</option>
+                        <option value="372">Estonia +372</option>
+                        <option value="268">Eswatini +268</option>
+                        <option value="251">Ethiopia +251</option>
+                        <option value="500">Falkland Islands +500</option>
+                        <option value="298">Faroe Islands +298</option>
+                        <option value="679">Fiji +679</option>
+                        <option value="358">Finland +358</option>
+                        <option value="33">France +33</option>
+                        <option value="594">French Guiana +594</option>
+                        <option value="689">French Polynesia +689</option>
+                        <option value="241">Gabon +241</option>
+                        <option value="220">Gambia +220</option>
+                        <option value="995">Georgia +995</option>
+                        <option value="49">Germany +49</option>
+                        <option value="233">Ghana +233</option>
+                        <option value="350">Gibraltar +350</option>
+                        <option value="30">Greece +30</option>
+                        <option value="299">Greenland +299</option>
+                        <option value="1">Grenada +1</option>
+                        <option value="590">Guadeloupe +590</option>
+                        <option value="1">Guatemala +1</option>
+                        <option value="44">Guernsey +44</option>
+                        <option value="224">Guinea +224</option>
+                        <option value="245">Guinea-Bissau +245</option>
+                        <option value="592">Guyana +592</option>
+                        <option value="509">Haiti +509</option>
+                        <option value="504">Honduras +504</option>
+                        <option value="852">Hong Kong +852</option>
+                        <option value="36">Hungary +36</option>
+                        <option value="354">Iceland +354</option>
+                        <option value="91">India +91</option>
+                        <option value="62">Indonesia +62</option>
+                        <option value="98">Iran +98</option>
+                        <option value="964">Iraq +964</option>
+                        <option value="353">Ireland +353</option>
+                        <option value="44">Isle of Man +44</option>
+                        <option value="972">Israel +972</option>
+                        <option value="39">Italy +39</option>
+                        <option value="1">Jamaica +1</option>
+                        <option value="81">Japan +81</option>
+                        <option value="44">Jersey +44</option>
+                        <option value="962">Jordan +962</option>
+                        <option value="7">Kazakhstan +7</option>
+                        <option value="254">Kenya +254</option>
+                        <option value="686">Kiribati +686</option>
+                        <option value="383">Kosovo +383</option>
+                        <option value="965">Kuwait +965</option>
+                        <option value="996">Kyrgyzstan +996</option>
+                        <option value="856">Laos +856</option>
+                        <option value="371">Latvia +371</option>
+                        <option value="961">Lebanon +961</option>
+                        <option value="266">Lesotho +266</option>
+                        <option value="231">Liberia +231</option>
+                        <option value="218">Libya +218</option>
+                        <option value="423">Liechtenstein +423</option>
+                        <option value="370">Lithuania +370</option>
+                        <option value="352">Luxembourg +352</option>
+                        <option value="853">Macau +853</option>
+                        <option value="261">Madagascar +261</option>
+                        <option value="265">Malawi +265</option>
+                        <option value="60">Malaysia +60</option>
+                        <option value="960">Maldives +960</option>
+                        <option value="223">Mali +223</option>
+                        <option value="356">Malta +356</option>
+                        <option value="692">Marshall Islands +692</option>
+                        <option value="596">Martinique +596</option>
+                        <option value="222">Mauritania +222</option>
+                        <option value="230">Mauritius +230</option>
+                        <option value="262">Mayotte +262</option>
+                        <option value="52">Mexico +52</option>
+                        <option value="691">Micronesia +691</option>
+                        <option value="373">Moldova +373</option>
+                        <option value="377">Monaco +377</option>
+                        <option value="976">Mongolia +976</option>
+                        <option value="382">Montenegro +382</option>
+                        <option value="1">Montserrat +1</option>
+                        <option value="212">Morocco +212</option>
+                        <option value="258">Mozambique +258</option>
+                        <option value="95">Myanmar +95</option>
+                        <option value="264">Namibia +264</option>
+                        <option value="674">Nauru +674</option>
+                        <option value="977">Nepal +977</option>
+                        <option value="31">Netherlands +31</option>
+                        <option value="599">Netherlands Antilles +599</option>
+                        <option value="687">New Caledonia +687</option>
+                        <option value="64">New Zealand +64</option>
+                        <option value="505">Nicaragua +505</option>
+                        <option value="227">Niger +227</option>
+                        <option value="234">Nigeria +234</option>
+                        <option value="683">Niue +683</option>
+                        <option value="850">North Korea +850</option>
+                        <option value="389">North Macedonia +389</option>
+                        <option value="47">Norway +47</option>
+                        <option value="968">Oman +968</option>
+                        <option value="92">Pakistan +92</option>
+                        <option value="680">Palau +680</option>
+                        <option value="970">Palestine +970</option>
+                        <option value="507">Panama +507</option>
+                        <option value="675">Papua New Guinea +675</option>
+                        <option value="595">Paraguay +595</option>
+                        <option value="51">Peru +51</option>
+                        <option value="63">Philippines +63</option>
+                        <option value="48">Poland +48</option>
+                        <option value="351">Portugal +351</option>
+                        <option value="1">Puerto Rico +1</option>
+                        <option value="974">Qatar +974</option>
+                        <option value="262">Réunion +262</option>
+                        <option value="40">Romania +40</option>
+                        <option value="7">Russia +7</option>
+                        <option value="250">Rwanda +250</option>
+                        <option value="590">Saint Barthélemy +590</option>
+                        <option value="290">Saint Helena +290</option>
+                        <option value="1">Saint Kitts and Nevis +1</option>
+                        <option value="1">Saint Lucia +1</option>
+                        <option value="590">Saint Martin +590</option>
+                        <option value="508">Saint Pierre and Miquelon +508</option>
+                        <option value="1">Saint Vincent and the Grenadines +1</option>
+                        <option value="685">Samoa +685</option>
+                        <option value="378">San Marino +378</option>
+                        <option value="239">Sao Tome and Principe +239</option>
+                        <option value="966">Saudi Arabia +966</option>
+                        <option value="221">Senegal +221</option>
+                        <option value="381">Serbia +381</option>
+                        <option value="248">Seychelles +248</option>
+                        <option value="232">Sierra Leone +232</option>
+                        <option value="65">Singapore +65</option>
+                        <option value="421">Slovakia +421</option>
+                        <option value="386">Slovenia +386</option>
+                        <option value="677">Solomon Islands +677</option>
+                        <option value="252">Somalia +252</option>
+                        <option value="27">South Africa +27</option>
+                        <option value="82">South Korea +82</option>
+                        <option value="211">South Sudan +211</option>
+                        <option value="34">Spain +34</option>
+                        <option value="94">Sri Lanka +94</option>
+                        <option value="249">Sudan +249</option>
+                        <option value="597">Suriname +597</option>
+                        <option value="47">Svalbard and Jan Mayen +47</option>
+                        <option value="46">Sweden +46</option>
+                        <option value="41">Switzerland +41</option>
+                        <option value="963">Syria +963</option>
+                        <option value="886">Taiwan +886</option>
+                        <option value="992">Tajikistan +992</option>
+                        <option value="255">Tanzania +255</option>
+                        <option value="66">Thailand +66</option>
+                        <option value="670">Timor-Leste +670</option>
+                        <option value="228">Togo +228</option>
+                        <option value="690">Tokelau +690</option>
+                        <option value="676">Tonga +676</option>
+                        <option value="1">Trinidad and Tobago +1</option>
+                        <option value="216">Tunisia +216</option>
+                        <option value="90">Turkey +90</option>
+                        <option value="993">Turkmenistan +993</option>
+                        <option value="1">Turks and Caicos Islands +1</option>
+                        <option value="688">Tuvalu +688</option>
+                        <option value="1">US Virgin Islands +1</option>
+                        <option value="256">Uganda +256</option>
+                        <option value="380">Ukraine +380</option>
+                        <option value="971">United Arab Emirates +971</option>
+                        <option value="44">United Kingdom +44</option>
+                        <option value="1">United States +1</option>
+                        <option value="598">Uruguay +598</option>
+                        <option value="998">Uzbekistan +998</option>
+                        <option value="678">Vanuatu +678</option>
+                        <option value="379">Vatican City +379</option>
+                        <option value="58">Venezuela +58</option>
+                        <option value="84">Vietnam +84</option>
+                        <option value="681">Wallis and Futuna +681</option>
+                        <option value="967">Yemen +967</option>
+                        <option value="260">Zambia +260</option>
+                        <option value="263">Zimbabwe +263</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" placeholder="Enter phone number" />
+                </div>
+            </div>
+
+            <!-- Message -->
+            <div class="form-group" style="margin-top:20px;">
+                <label for="message">Message <span style="color:var(--md-sys-color-on-surface-variant);opacity:0.6;font-weight:400;">(optional)</span></label>
+                <textarea id="message" placeholder="Type your pre-filled message…" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn-generate" id="generateBtn">
+                <span class="btn-icon"><i class="fas fa-link"></i></span>
+                <span class="btn-text">Generate Link</span>
+                <span class="spinner"></span>
+            </button>
+        </form>
+
+        <!-- Error -->
+        <div class="error-msg" id="errorMsg">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText">Something went wrong.</span>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result">
+            <div class="result-box">
+                <span class="link" id="linkDisplay">
+                    <a href="#" target="_blank" id="linkAnchor">wa.link/xxxxxx</a>
+                </span>
+                <div class="result-actions">
+                    <button class="btn-icon-only" id="copyBtn" title="Copy link">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                    <button class="btn-icon-only" id="openBtn" title="Open in WhatsApp">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="qr-section">
+                <div class="qr-wrapper">
+                    <div id="qrcode"></div>
+                </div>
+                <span class="qr-label">Scan to open</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---------- DOM refs ----------
+            const form = document.getElementById('linkForm');
+            const phoneInput = document.getElementById('phone');
+            const countryInput = document.getElementById('countryCode');
+            const messageInput = document.getElementById('message');
+            const generateBtn = document.getElementById('generateBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const errorText = document.getElementById('errorText');
+            const resultDiv = document.getElementById('result');
+            const linkAnchor = document.getElementById('linkAnchor');
+            const linkDisplay = document.getElementById('linkDisplay');
+            const copyBtn = document.getElementById('copyBtn');
+            const openBtn = document.getElementById('openBtn');
+
+            // ---------- Flag display ----------
+            const flagDisplay = document.getElementById('flagDisplay');
+
+            const countryAlphaMap = {
+                Afghanistan: 'AF', Albania: 'AL', Algeria: 'DZ', Andorra: 'AD',
+                Angola: 'AO', Anguilla: 'AI', 'Antigua and Barbuda': 'AG',
+                Argentina: 'AR', Armenia: 'AM', Aruba: 'AW', Australia: 'AU',
+                Austria: 'AT', Azerbaijan: 'AZ', Bahamas: 'BS', Bahrain: 'BH',
+                Bangladesh: 'BD', Barbados: 'BB', Belarus: 'BY', Belgium: 'BE',
+                Belize: 'BZ', Benin: 'BJ', Bermuda: 'BM', Bhutan: 'BT',
+                Bolivia: 'BO', 'Bosnia and Herzegovina': 'BA', Botswana: 'BW',
+                Brazil: 'BR', Brunei: 'BN', Bulgaria: 'BG', 'Burkina Faso': 'BF',
+                Burundi: 'BI', 'Cabo Verde': 'CV', Cambodia: 'KH', Cameroon: 'CM',
+                Canada: 'CA', 'Central African Republic': 'CF', Chad: 'TD',
+                Chile: 'CL', China: 'CN', Colombia: 'CO', Comoros: 'KM',
+                'Congo (Republic)': 'CG', 'Congo (DRC)': 'CD',
+                'Cook Islands': 'CK', 'Costa Rica': 'CR', Croatia: 'HR',
+                Cuba: 'CU', Cyprus: 'CY', 'Czech Republic': 'CZ', Denmark: 'DK',
+                Djibouti: 'DJ', Dominica: 'DM', 'Dominican Republic': 'DO',
+                Ecuador: 'EC', Egypt: 'EG', 'El Salvador': 'SV',
+                'Equatorial Guinea': 'GQ', Eritrea: 'ER', Estonia: 'EE',
+                Eswatini: 'SZ', Ethiopia: 'ET', 'Falkland Islands': 'FK',
+                'Faroe Islands': 'FO', Fiji: 'FJ', Finland: 'FI', France: 'FR',
+                'French Guiana': 'GF', 'French Polynesia': 'PF', Gabon: 'GA',
+                Gambia: 'GM', Georgia: 'GE', Germany: 'DE', Ghana: 'GH',
+                Gibraltar: 'GI', Greece: 'GR', Greenland: 'GL', Grenada: 'GD',
+                Guadeloupe: 'GP', Guatemala: 'GT', Guernsey: 'GG', Guinea: 'GN',
+                'Guinea-Bissau': 'GW', Guyana: 'GY', Haiti: 'HT', Honduras: 'HN',
+                'Hong Kong': 'HK', Hungary: 'HU', Iceland: 'IS', India: 'IN',
+                Indonesia: 'ID', Iran: 'IR', Iraq: 'IQ', Ireland: 'IE',
+                'Isle of Man': 'IM', Israel: 'IL', Italy: 'IT', Jamaica: 'JM',
+                Japan: 'JP', Jersey: 'JE', Jordan: 'JO', Kazakhstan: 'KZ',
+                Kenya: 'KE', Kiribati: 'KI', Kosovo: 'XK', Kuwait: 'KW',
+                Kyrgyzstan: 'KG', Laos: 'LA', Latvia: 'LV', Lebanon: 'LB',
+                Lesotho: 'LS', Liberia: 'LR', Libya: 'LY', Liechtenstein: 'LI',
+                Lithuania: 'LT', Luxembourg: 'LU', Macau: 'MO', Madagascar: 'MG',
+                Malawi: 'MW', Malaysia: 'MY', Maldives: 'MV', Mali: 'ML',
+                Malta: 'MT', 'Marshall Islands': 'MH', Martinique: 'MQ',
+                Mauritania: 'MR', Mauritius: 'MU', Mayotte: 'YT', Mexico: 'MX',
+                Micronesia: 'FM', Moldova: 'MD', Monaco: 'MC', Mongolia: 'MN',
+                Montenegro: 'ME', Montserrat: 'MS', Morocco: 'MA',
+                Mozambique: 'MZ', Myanmar: 'MM', Namibia: 'NA',
+                Nauru: 'NR', Nepal: 'NP', Netherlands: 'NL',
+                'Netherlands Antilles': 'AN', 'New Caledonia': 'NC',
+                'New Zealand': 'NZ', Nicaragua: 'NI', Niger: 'NE', Nigeria: 'NG',
+                Niue: 'NU', 'North Korea': 'KP', 'North Macedonia': 'MK',
+                Norway: 'NO', Oman: 'OM', Pakistan: 'PK', Palau: 'PW',
+                Palestine: 'PS', Panama: 'PA', 'Papua New Guinea': 'PG',
+                Paraguay: 'PY', Peru: 'PE', Philippines: 'PH', Poland: 'PL',
+                Portugal: 'PT', 'Puerto Rico': 'PR', Qatar: 'QA', Réunion: 'RE',
+                Romania: 'RO', Russia: 'RU', Rwanda: 'RW',
+                'Saint Barthélemy': 'BL', 'Saint Helena': 'SH',
+                'Saint Kitts and Nevis': 'KN', 'Saint Lucia': 'LC',
+                'Saint Martin': 'MF', 'Saint Pierre and Miquelon': 'PM',
+                'Saint Vincent and the Grenadines': 'VC', Samoa: 'WS',
+                'San Marino': 'SM', 'Sao Tome and Principe': 'ST',
+                'Saudi Arabia': 'SA', Senegal: 'SN', Serbia: 'RS',
+                Seychelles: 'SC', 'Sierra Leone': 'SL', Singapore: 'SG',
+                Slovakia: 'SK', Slovenia: 'SI', 'Solomon Islands': 'SB',
+                Somalia: 'SO', 'South Africa': 'ZA', 'South Korea': 'KR',
+                'South Sudan': 'SS', Spain: 'ES', 'Sri Lanka': 'LK',
+                Sudan: 'SD', Suriname: 'SR', 'Svalbard and Jan Mayen': 'SJ',
+                Sweden: 'SE', Switzerland: 'CH', Syria: 'SY',
+                Taiwan: 'TW', Tajikistan: 'TJ', Tanzania: 'TZ', Thailand: 'TH',
+                'Timor-Leste': 'TL', Togo: 'TG', Tokelau: 'TK', Tonga: 'TO',
+                'Trinidad and Tobago': 'TT', Tunisia: 'TN', Turkey: 'TR',
+                Turkmenistan: 'TM', 'Turks and Caicos Islands': 'TC', Tuvalu: 'TV',
+                'US Virgin Islands': 'VI', Uganda: 'UG', Ukraine: 'UA',
+                'United Arab Emirates': 'AE', 'United Kingdom': 'GB',
+                'United States': 'US', Uruguay: 'UY', Uzbekistan: 'UZ',
+                Vanuatu: 'VU', 'Vatican City': 'VA', Venezuela: 'VE',
+                Vietnam: 'VN', 'Wallis and Futuna': 'WF', Yemen: 'YE',
+                Zambia: 'ZM', Zimbabwe: 'ZW',
+            };
+
+            function toFlagEmoji(alpha) {
+                if (!alpha) return '';
+                const codePoints = alpha.toUpperCase().split('').map(c => 0x1F1E6 + c.charCodeAt(0) - 65);
+                return String.fromCodePoint(...codePoints);
+            }
+
+            function updateFlag() {
+                const selected = countryInput.options[countryInput.selectedIndex];
+                if (!selected) return;
+                const name = selected.textContent.split(' +')[0];
+                const alpha = countryAlphaMap[name] || '';
+                flagDisplay.textContent = toFlagEmoji(alpha);
+            }
+
+            countryInput.addEventListener('change', updateFlag);
+            // Run on page load to show initial flag (Bangladesh)
+            updateFlag();
+
+            // ---------- Auto-detect country by IP ----------
+                fetch('https://ip-api.com/json/', { mode: 'cors' })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.status !== 'success') return;
+                        const alpha = data.countryCode; // e.g. "BD"
+                        // Match by alpha-2 code to avoid +1/+44 shared-code conflicts
+                        for (let i = 0; i < countryInput.options.length; i++) {
+                            const name = countryInput.options[i].textContent.split(' +')[0];
+                            if (countryAlphaMap[name] === alpha) {
+                                countryInput.selectedIndex = i;
+                                break;
+                            }
+                        }
+                        updateFlag();
+                    })
+                    .catch(() => {}); // fallback to default (Bangladesh)
+            })();
+
+            let qrInstance = null;
+            let qrGenerationPending = false;
+
+            // ---------- Country-specific validation rules ----------
+            // Map country code => expected number of digits (after stripping country code)
+            // If a country is not in this map, we accept any length between 7 and 15 digits.
+            const countryLengthMap = {
+                '880': 10, // Bangladesh
+                '1': 10, // USA/Canada
+                '91': 10, // India
+                '44': 10, // UK
+                '61': 9, // Australia
+                '81': 10, // Japan
+                '86': 11, // China
+                '49': 10, // Germany
+                '33': 9, // France
+                '39': 10, // Italy
+                '55': 10, // Brazil
+                '7': 10, // Russia
+                '82': 10, // South Korea
+                '31': 9, // Netherlands
+                '34': 9, // Spain
+                '46': 9, // Sweden
+                '41': 9, // Switzerland
+                '60': 9, // Malaysia
+                '62': 10, // Indonesia
+                '63': 10, // Philippines
+                '64': 8, // New Zealand
+                '65': 8, // Singapore
+                '66': 9, // Thailand
+                '90': 10, // Turkey
+                '966': 9, // Saudi Arabia
+                '971': 9, // UAE
+                '20': 10, // Egypt
+                '27': 9, // South Africa
+                '30': 10, // Greece
+                '32': 9, // Belgium
+                '351': 9, // Portugal
+                '353': 9, // Ireland
+                '358': 9, // Finland
+                '36': 9, // Hungary
+                '43': 10, // Austria
+                '45': 8, // Denmark
+                '47': 8, // Norway
+                '48': 9, // Poland
+                '52': 10, // Mexico
+                '54': 10, // Argentina
+                '56': 9, // Chile
+                '57': 10, // Colombia
+                '58': 10, // Venezuela
+                '92': 10, // Pakistan
+                '94': 9, // Sri Lanka
+                '95': 9, // Myanmar
+                '98': 10, // Iran
+                '211': 9, // South Sudan
+                '212': 9, // Morocco
+                '213': 9, // Algeria
+                '216': 8, // Tunisia
+                '218': 9, // Libya
+                '220': 7, // Gambia
+                '221': 9, // Senegal
+                '222': 8, // Mauritania
+                '223': 8, // Mali
+                '224': 8, // Guinea
+                '225': 8, // Ivory Coast
+                '226': 8, // Burkina Faso
+                '227': 8, // Niger
+                '228': 8, // Togo
+                '229': 8, // Benin
+                '230': 7, // Mauritius
+                '231': 7, // Liberia
+                '232': 8, // Sierra Leone
+                '233': 9, // Ghana
+                '234': 10, // Nigeria
+                '235': 8, // Chad
+                '236': 8, // Central African Republic
+                '237': 9, // Cameroon
+                '238': 7, // Cape Verde
+                '239': 7, // Sao Tome
+                '240': 9, // Equatorial Guinea
+                '241': 8, // Gabon
+                '242': 9, // Congo
+                '243': 9, // DR Congo
+                '244': 9, // Angola
+                '245': 7, // Guinea-Bissau
+                '248': 7, // Seychelles
+                '249': 9, // Sudan
+                '250': 9, // Rwanda
+                '251': 9, // Ethiopia
+                '252': 8, // Somalia
+                '253': 7, // Djibouti
+                '254': 9, // Kenya
+                '255': 9, // Tanzania
+                '256': 9, // Uganda
+                '257': 8, // Burundi
+                '258': 9, // Mozambique
+                '260': 9, // Zambia
+                '261': 9, // Madagascar
+                '262': 9, // Reunion
+                '263': 9, // Zimbabwe
+                '264': 9, // Namibia
+                '265': 9, // Malawi
+                '266': 8, // Lesotho
+                '267': 8, // Botswana
+                '268': 8, // Swaziland
+                '269': 7, // Comoros
+                '297': 7, // Aruba
+                '298': 6, // Faroe Islands
+                '299': 6, // Greenland
+                '350': 8, // Gibraltar
+                '352': 9, // Luxembourg
+                '355': 9, // Albania
+                '356': 8, // Malta
+                '357': 8, // Cyprus
+                '359': 9, // Bulgaria
+                '370': 8, // Lithuania
+                '371': 8, // Latvia
+                '372': 8, // Estonia
+                '373': 8, // Moldova
+                '374': 8, // Armenia
+                '375': 9, // Belarus
+                '376': 6, // Andorra
+                '377': 8, // Monaco
+                '378': 9, // San Marino
+                '379': 9, // Vatican
+                '380': 9, // Ukraine
+                '381': 9, // Serbia
+                '382': 9, // Montenegro
+                '383': 9, // Kosovo
+                '385': 9, // Croatia
+                '386': 8, // Slovenia
+                '387': 8, // Bosnia
+                '389': 8, // Macedonia
+                '420': 9, // Czech Republic
+                '421': 9, // Slovakia
+                '423': 7, // Liechtenstein
+                '500': 5, // Falkland Islands
+                '501': 7, // Belize
+                '502': 8, // Guatemala
+                '503': 8, // El Salvador
+                '504': 8, // Honduras
+                '505': 8, // Nicaragua
+                '506': 8, // Costa Rica
+                '507': 8, // Panama
+                '508': 6, // Saint Pierre
+                '509': 8, // Haiti
+                '590': 9, // Guadeloupe
+                '591': 8, // Bolivia
+                '592': 7, // Guyana
+                '593': 9, // Ecuador
+                '594': 9, // French Guiana
+                '595': 9, // Paraguay
+                '596': 9, // Martinique
+                '597': 7, // Suriname
+                '598': 8, // Uruguay
+                '599': 7, // Netherlands Antilles
+                '670': 8, // East Timor
+                '672': 6, // Antarctica
+                '673': 7, // Brunei
+                '674': 7, // Nauru
+                '675': 7, // Papua New Guinea
+                '676': 5, // Tonga
+                '677': 7, // Solomon Islands
+                '678': 7, // Vanuatu
+                '679': 7, // Fiji
+                '680': 7, // Palau
+                '681': 6, // Wallis and Futuna
+                '682': 5, // Cook Islands
+                '683': 4, // Niue
+                '685': 5, // Samoa
+                '686': 5, // Kiribati
+                '687': 6, // New Caledonia
+                '688': 5, // Tuvalu
+                '689': 6, // French Polynesia
+                '690': 4, // Tokelau
+                '691': 7, // Micronesia
+                '692': 7, // Marshall Islands
+                '850': 8, // North Korea
+                '852': 8, // Hong Kong
+                '853': 8, // Macau
+                '855': 8, // Cambodia
+                '856': 8, // Laos
+                '886': 9, // Taiwan
+                '960': 7, // Maldives
+                '961': 8, // Lebanon
+                '962': 9, // Jordan
+                '963': 9, // Syria
+                '964': 10, // Iraq
+                '965': 8, // Kuwait
+                '966': 9, // Saudi Arabia
+                '967': 9, // Yemen
+                '968': 8, // Oman
+                '970': 9, // Palestine
+                '971': 9, // UAE
+                '972': 9, // Israel
+                '973': 8, // Bahrain
+                '974': 8, // Qatar
+                '975': 7, // Bhutan
+                '976': 8, // Mongolia
+                '977': 10, // Nepal
+                '992': 9, // Tajikistan
+                '993': 8, // Turkmenistan
+                '994': 9, // Azerbaijan
+                '995': 9, // Georgia
+                '996': 9, // Kyrgyzstan
+                '998': 9, // Uzbekistan
+            };
+
+            // ---------- Helpers ----------
+            function showError(text) {
+                errorText.textContent = text;
+                errorMsg.classList.add('visible');
+            }
+
+            function hideError() {
+                errorMsg.classList.remove('visible');
+            }
+
+            function setLoading(loading) {
+                if (loading) {
+                    generateBtn.classList.add('loading');
+                    generateBtn.disabled = true;
+                } else {
+                    generateBtn.classList.remove('loading');
+                    generateBtn.disabled = false;
+                }
+            }
+
+            function clearQR() {
+                const container = document.getElementById('qrcode');
+                while (container.firstChild) {
+                    container.removeChild(container.firstChild);
+                }
+                qrInstance = null;
+                qrGenerationPending = false;
+            }
+
+            function generateQR(url) {
+                clearQR();
+                const container = document.getElementById('qrcode');
+
+                const rect = container.getBoundingClientRect();
+                if (rect.width === 0 || rect.height === 0) {
+                    requestAnimationFrame(() => {
+                        generateQR(url);
+                    });
+                    return;
+                }
+
+                qrGenerationPending = true;
+
+                setTimeout(() => {
+                    try {
+                        qrInstance = new QRCode(container, {
+                            text: url,
+                            width: 160,
+                            height: 160,
+                            colorDark: '#1a3a1e',
+                            colorLight: '#ffffff',
+                            correctLevel: QRCode.CorrectLevel.H,
+                        });
+                        qrGenerationPending = false;
+                    } catch (err) {
+                        console.warn('QR generation error:', err);
+                        qrGenerationPending = false;
+                        container.textContent = 'QR';
+                        container.style.cssText =
+                            'display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--md-sys-color-primary);';
+                    }
+                }, 80);
+            }
+
+            function showResult(shortUrl, fullUrl) {
+                linkAnchor.href = fullUrl || shortUrl;
+                linkAnchor.textContent = shortUrl;
+                linkDisplay.style.display = 'block';
+
+                resultDiv.classList.add('visible');
+
+                setTimeout(() => {
+                    generateQR(fullUrl || shortUrl);
+                }, 100);
+            }
+
+            // ---------- Validation ----------
+            function validatePhoneNumber(phone, countryCode) {
+                const digits = phone.replace(/\D/g, '');
+                const expectedLength = countryLengthMap[countryCode];
+                if (expectedLength) {
+                    if (digits.length === expectedLength) {
+                        return true;
+                    } else {
+                        alert(`invalid number ⚠️\nExpected ${expectedLength} digits for country code ${countryCode}, but got ${digits.length}.`);
+                        return false;
+                    }
+                } else {
+                    // No specific rule: accept between 7 and 15 digits
+                    if (digits.length >= 7 && digits.length <= 15) {
+                        return true;
+                    } else {
+                        alert(`invalid number ⚠️\nPhone number must be between 7 and 15 digits.`);
+                        return false;
+                    }
+                }
+            }
+
+            // ---------- API call ----------
+            async function generateLink(phone, countryCode, message) {
+                const payload = {
+                    phone: phone.trim(),
+                    countryCode: countryCode.trim(),
+                    message: message.trim() || '',
+                };
+
+                const response = await fetch('https://api.wa.link/v1/newlink', {
+                    method: 'POST',
+                    headers: {
+                        'accept': 'application/json, text/plain, */*',
+                        'accept-language': 'en-BD,en-GB;q=0.9,en-US;q=0.8,en;q=0.7',
+                        'content-type': 'application/json',
+                        'sec-ch-ua': '"Chromium";v="137", "Not/A)Brand";v="24"',
+                        'sec-ch-ua-mobile': '?1',
+                        'sec-ch-ua-platform': '"Android"',
+                        'sec-fetch-dest': 'empty',
+                        'sec-fetch-mode': 'cors',
+                        'sec-fetch-site': 'same-site',
+                        'x-api-key': '3SPdHlx5Kn8Wv3PYFwg5L6YAxBmFi3D06a8PDZvG',
+                    },
+                    referrer: 'https://create.wa.link/',
+                    referrerPolicy: 'strict-origin-when-cross-origin',
+                    body: JSON.stringify(payload),
+                    mode: 'cors',
+                    credentials: 'omit',
+                });
+
+                if (!response.ok) {
+                    let detail = `HTTP ${response.status}`;
+                    try {
+                        const errData = await response.json();
+                        if (errData.message) detail = errData.message;
+                    } catch (_) { /* ignore */ }
+                    throw new Error(detail);
+                }
+
+                const data = await response.json();
+                const shortUrl = data.data?.shortUrl || data.link || data.shortUrl || data.url || null;
+                if (!shortUrl) {
+                    throw new Error('No link returned from API.');
+                }
+                return shortUrl;
+            }
+
+            // ---------- Form submit ----------
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hideError();
+                resultDiv.classList.remove('visible');
+                clearQR();
+
+                const phone = phoneInput.value.trim();
+                const country = countryInput.value.trim();
+                const message = messageInput.value.trim();
+
+                if (!phone) {
+                    showError('Please enter a phone number.');
+                    phoneInput.focus();
+                    return;
+                }
+                if (!country) {
+                    showError('Please enter a country code.');
+                    countryInput.focus();
+                    return;
+                }
+
+                // Remove all non-digits, then strip leading zeros
+                let cleanPhone = phone.replace(/\D/g, '');
+                cleanPhone = cleanPhone.replace(/^0+/, '');
+                const cleanCountry = country.replace(/\D/g, '');
+
+                if (!cleanPhone) {
+                    showError('Phone number must contain digits.');
+                    phoneInput.focus();
+                    return;
+                }
+                if (!cleanCountry) {
+                    showError('Country code must contain digits.');
+                    countryInput.focus();
+                    return;
+                }
+
+                // Validate phone number based on country
+                if (!validatePhoneNumber(cleanPhone, cleanCountry)) {
+                    phoneInput.focus();
+                    return;
+                }
+
+                setLoading(true);
+
+                try {
+                    const shortUrl = await generateLink(cleanPhone, cleanCountry, message);
+                    const waUrl =
+                        `https://wa.me/${cleanCountry}${cleanPhone}?text=${encodeURIComponent(message || '')}`;
+                    showResult(shortUrl, waUrl);
+                } catch (err) {
+                    showError(err.message || 'Failed to generate link. Please try again.');
+                    resultDiv.classList.remove('visible');
+                } finally {
+                    setLoading(false);
+                }
+            });
+
+            // ---------- Copy button ----------
+            copyBtn.addEventListener('click', async () => {
+                const linkText = linkAnchor.textContent;
+                if (!linkText || linkText === '#') return;
+                try {
+                    await navigator.clipboard.writeText(linkText);
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    }, 2000);
+                } catch (_) {
+                    const range = document.createRange();
+                    const sel = window.getSelection();
+                    range.selectNodeContents(linkAnchor);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    document.execCommand('copy');
+                    sel.removeAllRanges();
+                    copyBtn.classList.add('copied');
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    setTimeout(() => {
+                        copyBtn.classList.remove('copied');
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    }, 2000);
+                }
+            });
+
+            // ---------- Open button ----------
+            openBtn.addEventListener('click', () => {
+                const href = linkAnchor.href;
+                if (href && href !== '#') {
+                    window.open(href, '_blank');
+                } else {
+                    const phone = phoneInput.value.trim().replace(/\D/g, '').replace(/^0+/, '');
+                    const country = countryInput.value.trim().replace(/\D/g, '');
+                    const message = messageInput.value.trim();
+                    if (phone && country) {
+                        const waUrl =
+                            `https://wa.me/${country}${phone}?text=${encodeURIComponent(message || '')}`;
+                        window.open(waUrl, '_blank');
+                    }
+                }
+            });
+
+        })();
+    </script>
+
+</body>
+</html>
